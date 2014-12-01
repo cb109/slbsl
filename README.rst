@@ -21,7 +21,7 @@ Usage
 
 The package installs two shell script that you can call:
 
-    sl [<path>] : Converts all backslashes in <path> or the clipboard to slashes.
-    bsl [<path>] : Converts all slashes in <path> or the clipboard to backslashes.
+sl [<path>] : Converts all backslashes in <path> or the clipboard to slashes.
+bsl [<path>] : Converts all slashes in <path> or the clipboard to backslashes.
 
 The result is stored in the clipboard.
