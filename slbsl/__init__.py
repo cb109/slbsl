@@ -13,6 +13,10 @@ import sys
 import pyperclip
 
 
+slash = "/"
+backslash = "\\"
+
+
 def getCommandlineInput():
     args = sys.argv[1:]
     txt = " ".join(args) if args else None
@@ -36,9 +40,9 @@ def convert(token, replacement, txt):
 
 
 def sl(txt=None):
-    return convert("\\", "/", txt)
+    return convert(backslash, slash, txt)
 
 
 def bsl(txt=None):
-    return convert("/", "\\", txt)
+    return convert(slash, backslash, txt)
 
