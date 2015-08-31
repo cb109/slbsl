@@ -1,8 +1,11 @@
 slbsl
 =====
 
-A small utility to convert slashes/backslashes to ease the pain of working
-in environments that use both (e.g. bash on Windows).
+Convert paths from Windows to UNIX and vice versa.
+
+Written to slightly ease the pain of working in environments that use
+both like a bash on Windows.
+
 
 Installation
 ------------
@@ -13,15 +16,29 @@ Installation
 Dependencies
 ------------
 
-    pyperclip, for clipboard functionality.
+`pyperclip <http://pypi.python.org/pypi/pyperclip>`_ for clipboard functionality.
+
+
+Tests
+-----
+
+You need `pytest <http://pypi.python.org/pypi/pytest>`_ installed.
+
+    py.test tests -v
 
 
 Usage
 -----
 
-The package installs two shell script that you can call:
+The package installs two shell script that you can call::
 
-sl [<path>] : Converts all backslashes in <path> or the clipboard to slashes.
-bsl [<path>] : Converts all slashes in <path> or the clipboard to backslashes.
+     sl [path] : Converts <path> or clipboard content to UNIX convention.
+    bsl [path] : Converts <path> or clipboard content to Windows convention.
 
-The result is stored in the clipboard.
+The result is returned to the commandline and stored additionally in the clipboard.
+
+
+Why the stupid name?
+--------------------
+
+**sl** = slash, **bsl** = backslash
