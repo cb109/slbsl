@@ -4,7 +4,7 @@ import setuptools
 
 setuptools.setup(
     name="slbsl",
-    version="0.1.6",
+    version="0.2.0",
     description="Convert slashes in text on commandline or in clipboard.",
     long_description=open("README.rst").read(),
     keywords="slash, backslash, linux, unix, windows, conversion",
