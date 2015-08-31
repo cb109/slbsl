@@ -1,13 +1,13 @@
-"""Provides two functions to convert paths from UNIX to Windows
-convention and vice versa. This affects slashes vs backslashes, drive
-letters and escaping of spaces and parentheses.
+"""
+Convert paths from Windows to UNIX and vice versa.
+
+This affects slashes vs backslashes, drive letters and escaping of
+spaces and parentheses. Please note that the script is pretty dumb, so
+make sure to give it a path, not arbitrary text.
 
 If no text is given to the function (or shell script), it will take the
 clipboard content as input. The result is printed to the commandline and
 also stored to the clipboard.
-
-Please note that the script is pretty dumb, so make sure to give it a
-path, not arbitrary text.
 
 """
 __all__ = ["sl", "bsl"]
@@ -93,20 +93,16 @@ def _toWindows(pth):
     pth = _convertUnixDriveLetter(pth)
     pth = _convertUnixSlashes(pth)
     pth = _unescapeUnix(pth)
-    _stdout(pth)
-    return _setClipboardContent(pth)
+    _setClipboardContent(pth)
+    return pth
 
 
 def _toUnix(pth):
     pth = _convertWindowsDriveLetter(pth)
     pth = _convertWindowsSlashes(pth)
     pth = _escapeWindows(pth)
-    _stdout(pth)
-    return _setClipboardContent(pth)
-
-
-def _stdout(txt):
-    print txt
+    _setClipboardContent(pth)
+    return pth
 
 
 def sl(pth=None):
