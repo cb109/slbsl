@@ -28,14 +28,19 @@ def testcases():
 
 
 def test_datavalid(testcases):
+    """Make sure our testcases are not empty."""
     assert len(testcases) == 10
 
 
-def test_sl(testcases):
-    for winpath, unixpath in testcases.items():
-        assert slbsl.sl(winpath) == unixpath
+@pytest.mark.parametrize("winpath,unixpath",
+                         testcases().items())
+def test_sl(winpath, unixpath):
+    """Test conversion of Windows to Unix path conventions."""
+    assert slbsl.sl(winpath) == unixpath
 
 
-def test_bsl(testcases):
-    for winpath, unixpath in testcases.items():
-        assert slbsl.bsl(unixpath) == winpath
+@pytest.mark.parametrize("winpath,unixpath",
+                         testcases().items())
+def test_bsl(winpath, unixpath):
+    """Test conversion of Unix to Windows path conventions."""
+    assert slbsl.bsl(unixpath) == winpath
