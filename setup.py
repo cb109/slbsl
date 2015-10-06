@@ -4,14 +4,14 @@ import setuptools
 
 setuptools.setup(
     name="slbsl",
-    version="0.2.0",
-    description="Convert slashes in text on commandline or in clipboard.",
+    version="0.2.1",
+    description="Convert paths from Windows to UNIX and vice versa.",
     long_description=open("README.rst").read(),
     keywords="slash, backslash, linux, unix, windows, conversion",
-    url="https://cb109@bitbucket.org/cb109/slbsl.git",
+    url="https://github.com/cb109/slbsl.git",
     author="Christoph Buelter",
-    author_email="c.buelter@arcor.de",
-    packages=setuptools.find_packages(),
+    author_email="info@cbuelter.de",
+    py_modules=["slbsl"],
     install_requires=[
         "pyperclip"
     ],
@@ -22,4 +22,3 @@ setuptools.setup(
         ],
     }
 )
-

@@ -3,8 +3,7 @@ slbsl
 
 Convert paths from Windows to UNIX and vice versa.
 
-Written to slightly ease the pain of working in environments that use
-both like a bash on Windows.
+Written to slightly ease the pain of working in environments that use both like a bash on Windows. Do not pass arbitrary text to the tool, only a path (though it may be wrapped in quotation marks).
 
 
 Installation
@@ -24,7 +23,7 @@ Tests
 
 You need `pytest <http://pypi.python.org/pypi/pytest>`_ installed.
 
-    py.test tests -v
+    py.test test_slbsl -v
 
 
 Usage
@@ -41,4 +40,4 @@ The result is returned to the commandline and stored additionally in the clipboa
 Why the stupid name?
 --------------------
 
-**sl** = slash, **bsl** = backslash
+**sl** ash **b** ack **sl** ash
