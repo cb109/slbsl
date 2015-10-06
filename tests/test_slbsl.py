@@ -14,7 +14,6 @@ def testcases():
     }
 
 
-
 def test_datavalid(testcases):
     assert len(testcases) == 2
 
