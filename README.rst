@@ -40,4 +40,4 @@ The result is returned to the commandline and stored additionally in the clipboa
 Why the stupid name?
 --------------------
 
-**sl**ash, **b**ack**sl**ash
+**sl** ash **b** ack **sl** ash
