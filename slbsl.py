@@ -27,27 +27,27 @@ openpar = "("
 closepar = ")"
 
 
-def _getCommandlineInput():
+def get_commandline_input():
     """Returns commandline args as space-separated string."""
     args = sys.argv[1:]
     txt = " ".join(args) if args else None
     return txt
 
 
-def _getClipboardContent():
+def get_clipboard_content():
     """Returns the content of the Windows clipboard."""
     return str(pyperclip.paste())
 
 
-def _setClipboardContent(txt):
+def set_clipboard_content(txt):
     """Sets the Windows clipboard content to the given text."""
     return pyperclip.copy(txt)
 
 
-def _ensurePath(pth):
+def ensure_path(pth):
     """Tries to get pth either as given, or from commandline or the
     clipboard. If none of these source provide input, bail out."""
-    pth = pth or _getCommandlineInput() or _getClipboardContent()
+    pth = pth or get_commandline_input() or get_clipboard_content()
     if not pth:
         print ("ERROR - Could not get path from commandline "
                "or clipboard or it is empty.")
@@ -55,7 +55,7 @@ def _ensurePath(pth):
     return pth
 
 
-def _convertWindowsDriveLetter(pth):
+def convert_windows_drive_letter(pth):
     """Converts 'C:\' to '/C/'. Handles wrapping quotation marks."""
     original = pth
     pth = pth.replace(colon + backslash, slash)
@@ -70,19 +70,19 @@ def _convertWindowsDriveLetter(pth):
     return pth
 
 
-def _escapeWindows(pth):
+def escape_windows(pth):
     """Escapes certain characters in pth with a backslash."""
     for token in (space, openpar, closepar):
         pth = pth.replace(token, backslash + token)
     return pth
 
 
-def _convertWindowsSlashes(pth):
+def convert_windows_slashes(pth):
     """Replaces all backslashes in pth with slashes."""
     return pth.replace(backslash, slash)
 
 
-def _convertUnixDriveLetter(pth):
+def convert_unix_drive_letter(pth):
     """Converts '/C/' to 'C:\'. Handles wrapping quotation marks."""
     starts_with_unix_driveletter = r"([\"\']*)(\/)(?P<drive>[a-zA-Z])(\/)"
     match = re.match(starts_with_unix_driveletter, pth)
@@ -97,43 +97,43 @@ def _convertUnixDriveLetter(pth):
     return pth
 
 
-def _convertUnixSlashes(pth):
+def convert_unix_slashes(pth):
     """Replaces all slashes in pth with backslashes."""
     return pth.replace(slash, backslash)
 
 
-def _unescapeUnix(pth):
+def unescape_unix(pth):
     """Removes backslashes in front of certain characters in pth."""
     for token in (space, openpar, closepar):
         pth = pth.replace(backslash + token, token)
     return pth
 
 
-def _toWindows(pth):
+def to_windows(pth):
     """Converts the given Unix path to Windows convention."""
-    pth = _convertUnixDriveLetter(pth)
-    pth = _convertUnixSlashes(pth)
-    pth = _unescapeUnix(pth)
-    _setClipboardContent(pth)
+    pth = convert_unix_drive_letter(pth)
+    pth = convert_unix_slashes(pth)
+    pth = unescape_unix(pth)
+    set_clipboard_content(pth)
     return pth
 
 
-def _toUnix(pth):
+def to_unix(pth):
     """Converts the given Windows path to Unix convention."""
-    pth = _convertWindowsDriveLetter(pth)
-    pth = _convertWindowsSlashes(pth)
-    pth = _escapeWindows(pth)
-    _setClipboardContent(pth)
+    pth = convert_windows_drive_letter(pth)
+    pth = convert_windows_slashes(pth)
+    pth = escape_windows(pth)
+    set_clipboard_content(pth)
     return pth
 
 
 def sl(pth=None):
     """Fetches the pth and converts it to Unix convention."""
-    pth = _ensurePath(pth)
-    return _toUnix(pth)
+    pth = ensure_path(pth)
+    return to_unix(pth)
 
 
 def bsl(pth=None):
     """Fetches the pth and converts it to Windows convention."""
-    pth = _ensurePath(pth)
-    return _toWindows(pth)
+    pth = ensure_path(pth)
+    return to_windows(pth)
