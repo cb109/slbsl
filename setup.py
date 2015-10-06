@@ -11,7 +11,7 @@ setuptools.setup(
     url="https://github.com/cb109/slbsl.git",
     author="Christoph Buelter",
     author_email="info@cbuelter.de",
-    packages=setuptools.find_packages(),
+    py_modules=["slbsl"],
     install_requires=[
         "pyperclip"
     ],
