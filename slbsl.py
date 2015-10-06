@@ -51,12 +51,21 @@ def _ensurePath(pth):
 
 
 def _convertWindowsDriveLetter(pth):
+    """Converts 'C:\' to '/C/'.
+
+    Handles wrapping quotation marks.
+
+    """
     original = pth
     pth = pth.replace(colon + backslash, slash)
     pth = pth.replace(colon + slash, slash)
     haschanged = pth != original
     if haschanged:
-        pth = slash + pth
+        # Inject slash before driveletter.
+        firstslash_index = pth.find(slash)
+        if firstslash_index:
+            driveletter_index = firstslash_index - 1
+            pth = pth[:driveletter_index] + slash + pth[driveletter_index:]
     return pth
 
 
@@ -71,10 +80,20 @@ def _convertWindowsSlashes(pth):
 
 
 def _convertUnixDriveLetter(pth):
-    starts_with_unix_driveletter = r"(\/[a-zA-Z]\/)"
+    """Converts '/C/' to 'C:\'.
+
+    Handles wrapping quotation marks.
+
+    """
+    starts_with_unix_driveletter = r"([\"\']*)(\/)(?P<drive>[a-zA-Z])(\/)"
     match = re.match(starts_with_unix_driveletter, pth)
     if match:
-        pth = pth[1] + colon + backslash + pth[3:]
+        drive = match.group("drive")
+        drive_index = pth.find(drive)
+        # Drop the leading slash, while keeping any quotation marks.
+        pth = (pth[:drive_index - 1] +
+               drive + colon + backslash +
+               pth[drive_index + 2:])
     pth = pth.replace(colon + slash, colon + backslash)
     return pth
 
