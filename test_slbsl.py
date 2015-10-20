@@ -1,4 +1,5 @@
 import pytest
+import pyperclip
 
 import slbsl
 
@@ -50,16 +51,21 @@ def test_datavalid(slbsl_testcases, fsl_testcases):
 def test_sl(winpath, unixpath):
     """Test conversion of Windows to Unix path conventions."""
     assert slbsl.sl(winpath) == unixpath
+    assert pyperclip.paste() == unixpath
 
 
 @pytest.mark.parametrize("winpath, unixpath", slbsl_testcases().items())
 def test_bsl(winpath, unixpath):
     """Test conversion of Unix to Windows path conventions."""
     assert slbsl.bsl(unixpath) == winpath
+    assert pyperclip.paste() == winpath
 
 
 @pytest.mark.parametrize("original, flipped", fsl_testcases().items())
 def test_fsl(original, flipped):
     """Test flipping all slashes/backslashes."""
     assert slbsl.fsl(original) == flipped
+    assert pyperclip.paste() == flipped
+
     assert slbsl.fsl(flipped) == original
+    assert pyperclip.paste() == original
