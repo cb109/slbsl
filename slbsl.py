@@ -10,7 +10,7 @@ clipboard content as input. The result is printed to the commandline and
 also stored to the clipboard.
 
 """
-__all__ = ["sl", "bsl"]
+__all__ = ["sl", "bsl", "fsl"]
 
 
 import re
@@ -114,7 +114,6 @@ def to_windows(pth):
     pth = convert_unix_drive_letter(pth)
     pth = convert_unix_slashes(pth)
     pth = unescape_unix(pth)
-    set_clipboard_content(pth)
     return pth
 
 
@@ -123,17 +122,37 @@ def to_unix(pth):
     pth = convert_windows_drive_letter(pth)
     pth = convert_windows_slashes(pth)
     pth = escape_windows(pth)
-    set_clipboard_content(pth)
+    return pth
+
+
+def flip(pth):
+    """Flips each slash to a backslash and each backslash to a slash."""
+    splash_tokens = pth.split(slash)
+    splash_tokens = map(lambda token: token.replace(backslash, slash),
+                        splash_tokens)
+    pth = backslash.join(splash_tokens)
     return pth
 
 
 def sl(pth=None):
     """Fetches the pth and converts it to Unix convention."""
     pth = ensure_path(pth)
-    return to_unix(pth)
+    pth = to_unix(pth)
+    set_clipboard_content(pth)
+    return pth
 
 
 def bsl(pth=None):
     """Fetches the pth and converts it to Windows convention."""
     pth = ensure_path(pth)
-    return to_windows(pth)
+    pth = to_windows(pth)
+    set_clipboard_content(pth)
+    return pth
+
+
+def fsl(pth=None):
+    """Fetches the pth and flips the slashes into their opposites."""
+    pth = ensure_path(pth)
+    pth = flip(pth)
+    set_clipboard_content(pth)
+    return pth
