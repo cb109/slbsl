@@ -134,25 +134,30 @@ def _flip(pth):
     return pth
 
 
+def _pathcommand(func):
+    """A decorator to make sure we fetch the pth from one of multiple
+    sources, call the function and store the result to the clipboard."""
+    def wrapper(pth=None):
+        pth = _ensure_path(pth)
+        pth = func(pth)
+        _set_clipboard_content(pth)
+        return pth
+    return wrapper
+
+
+@_pathcommand
 def sl(pth=None):
     """Fetches the pth and converts it to Unix convention."""
-    pth = _ensure_path(pth)
-    pth = _to_unix(pth)
-    _set_clipboard_content(pth)
-    return pth
+    return _to_unix(pth)
 
 
+@_pathcommand
 def bsl(pth=None):
     """Fetches the pth and converts it to Windows convention."""
-    pth = _ensure_path(pth)
-    pth = _to_windows(pth)
-    _set_clipboard_content(pth)
-    return pth
+    return _to_windows(pth)
 
 
+@_pathcommand
 def fsl(pth=None):
     """Fetches the pth and flips the slashes into their opposites."""
-    pth = _ensure_path(pth)
-    pth = _flip(pth)
-    _set_clipboard_content(pth)
-    return pth
+    return _flip(pth)
