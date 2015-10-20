@@ -5,14 +5,15 @@ This affects slashes vs backslashes, drive letters and escaping of
 spaces and parentheses. Please note that the script is pretty dumb, so
 make sure to give it a path, not arbitrary text.
 
-If no text is given to the function (or shell script), it will take the
-clipboard content as input. The result is printed to the commandline and
-also stored to the clipboard.
+If no text is given to the functions (or shell scripts), they will take
+the clipboard content as input. The result is returned to the commandline
+and also stored to the clipboard.
 
 """
-__all__ = ["sl", "bsl", "fsl"]
+__all__ = ["sl", "bsl", "fsl", "esl"]
 
 
+import os
 import re
 import sys
 
@@ -128,10 +129,29 @@ def _to_unix(pth):
 def _flip(pth):
     """Flips each slash to a backslash and each backslash to a slash."""
     splash_tokens = pth.split(slash)
-    splash_tokens = map(lambda token: token.replace(backslash, slash),
-                        splash_tokens)
+    splash_tokens = map(_convert_windows_slashes, splash_tokens)
     pth = backslash.join(splash_tokens)
     return pth
+
+
+def _equalize(pth):
+    """Equalizes slashes in pth depending on whether slash or backslash
+    is the majority.  In case of a draw, favor the one matching the os
+    conventions."""
+    num_slash = pth.count(slash)
+    num_backslash = pth.count(backslash)
+    if num_slash == num_backslash == 0:
+        return pth
+    elif num_slash > num_backslash:
+        return _convert_windows_slashes(pth)
+    elif num_backslash > num_slash:
+        return _convert_unix_slashes(pth)
+    else:  # Draw.
+        on_windows = os.name == "nt"
+        if on_windows:
+            return _convert_unix_slashes(pth)
+        else:
+            return _convert_windows_slashes(pth)
 
 
 def _pathcommand(func):
@@ -147,17 +167,23 @@ def _pathcommand(func):
 
 @_pathcommand
 def sl(pth=None):
-    """Fetches the pth and converts it to Unix convention."""
+    """Converts pth to Unix convention."""
     return _to_unix(pth)
 
 
 @_pathcommand
 def bsl(pth=None):
-    """Fetches the pth and converts it to Windows convention."""
+    """Converts pth to Windows convention."""
     return _to_windows(pth)
 
 
 @_pathcommand
 def fsl(pth=None):
-    """Fetches the pth and flips the slashes into their opposites."""
+    """Flips slashes in pth to their opposites."""
     return _flip(pth)
+
+
+@_pathcommand
+def esl(pth=None):
+    """Equalize slashes in pth."""
+    return _equalize(pth)
