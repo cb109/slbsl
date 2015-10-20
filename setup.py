@@ -20,6 +20,7 @@ setuptools.setup(
             "sl=slbsl:sl",
             "bsl=slbsl:bsl",
             "fsl=slbsl:fsl",
+            "esl=slbsl:esl",
         ],
     }
 )
