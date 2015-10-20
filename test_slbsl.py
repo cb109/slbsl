@@ -4,7 +4,7 @@ import slbsl
 
 
 @pytest.fixture
-def testcases():
+def slbsl_testcases():
     """Maps windows paths to their unix equivalents."""
     return {
         # Basic paths.
@@ -27,20 +27,39 @@ def testcases():
     }
 
 
-def test_datavalid(testcases):
+@pytest.fixture
+def fsl_testcases():
+    """Paths with a mix of slashes and backslashes."""
+    return {
+        r"/": "\\",
+        r"\\fileshare\test/project\shot/scene": r"//fileshare/test\project/shot\scene",
+        r"foo/test/bar": r"foo\test\bar",
+        r"foo\\test/bar": r"foo//test\bar",
+        r"C:\dev\test\/foo/bar/file.py": r"C:/dev/test/\foo\bar\file.py",
+        r"C:\dev\test\/\foo/\\bar/file.py": r"C:/dev/test/\/foo\//bar\file.py",
+    }
+
+
+def test_datavalid(slbsl_testcases, fsl_testcases):
     """Make sure our testcases are not empty."""
-    assert len(testcases) == 10
+    assert len(slbsl_testcases) == 10
+    assert len(fsl_testcases) == 6
 
 
-@pytest.mark.parametrize("winpath,unixpath",
-                         testcases().items())
+@pytest.mark.parametrize("winpath, unixpath", slbsl_testcases().items())
 def test_sl(winpath, unixpath):
     """Test conversion of Windows to Unix path conventions."""
     assert slbsl.sl(winpath) == unixpath
 
 
-@pytest.mark.parametrize("winpath,unixpath",
-                         testcases().items())
+@pytest.mark.parametrize("winpath, unixpath", slbsl_testcases().items())
 def test_bsl(winpath, unixpath):
     """Test conversion of Unix to Windows path conventions."""
     assert slbsl.bsl(unixpath) == winpath
+
+
+@pytest.mark.parametrize("original, flipped", fsl_testcases().items())
+def test_fsl(original, flipped):
+    """Test flipping all slashes/backslashes."""
+    assert slbsl.fsl(original) == flipped
+    assert slbsl.fsl(flipped) == original
