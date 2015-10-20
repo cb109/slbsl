@@ -4,7 +4,7 @@ import setuptools
 
 setuptools.setup(
     name="slbsl",
-    version="0.2.1",
+    version="0.2.3",
     description="Convert paths from Windows to UNIX and vice versa.",
     long_description=open("README.rst").read(),
     keywords="slash, backslash, linux, unix, windows, conversion",
