@@ -34,6 +34,7 @@ The package installs a few shell scripts that you can call::
      sl [path] : Converts <path> or clipboard content to UNIX convention.
     bsl [path] : Converts <path> or clipboard content to Windows convention.
     fsl [path] : Flips slashes in <path> or clipboard content to their opposite individually.
+    esl [path] : Equalizes slashes in <path> or clipboard content depending on the majority. In case of a draw, favors backslashes on Windows and slashes on UNIX.
 
 The result is returned to the commandline and stored additionally in the clipboard.
 
