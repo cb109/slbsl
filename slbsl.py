@@ -10,7 +10,7 @@ clipboard content as input. The result is printed to the commandline and
 also stored to the clipboard.
 
 """
-__all__ = ["sl", "bsl"]
+__all__ = ["sl", "bsl", "fsl"]
 
 
 import re
@@ -27,27 +27,27 @@ openpar = "("
 closepar = ")"
 
 
-def get_commandline_input():
+def _get_commandline_input():
     """Returns commandline args as space-separated string."""
     args = sys.argv[1:]
     txt = " ".join(args) if args else None
     return txt
 
 
-def get_clipboard_content():
+def _get_clipboard_content():
     """Returns the content of the Windows clipboard."""
     return str(pyperclip.paste())
 
 
-def set_clipboard_content(txt):
+def _set_clipboard_content(txt):
     """Sets the Windows clipboard content to the given text."""
     return pyperclip.copy(txt)
 
 
-def ensure_path(pth):
+def _ensure_path(pth):
     """Tries to get pth either as given, or from commandline or the
     clipboard. If none of these source provide input, bail out."""
-    pth = pth or get_commandline_input() or get_clipboard_content()
+    pth = pth or _get_commandline_input() or _get_clipboard_content()
     if not pth:
         print ("ERROR - Could not get path from commandline "
                "or clipboard or it is empty.")
@@ -55,7 +55,7 @@ def ensure_path(pth):
     return pth
 
 
-def convert_windows_drive_letter(pth):
+def _convert_windows_drive_letter(pth):
     """Converts 'C:\' to '/C/'. Handles wrapping quotation marks."""
     original = pth
     pth = pth.replace(colon + backslash, slash)
@@ -70,19 +70,19 @@ def convert_windows_drive_letter(pth):
     return pth
 
 
-def escape_windows(pth):
+def _escape_windows(pth):
     """Escapes certain characters in pth with a backslash."""
     for token in (space, openpar, closepar):
         pth = pth.replace(token, backslash + token)
     return pth
 
 
-def convert_windows_slashes(pth):
+def _convert_windows_slashes(pth):
     """Replaces all backslashes in pth with slashes."""
     return pth.replace(backslash, slash)
 
 
-def convert_unix_drive_letter(pth):
+def _convert_unix_drive_letter(pth):
     """Converts '/C/' to 'C:\'. Handles wrapping quotation marks."""
     starts_with_unix_driveletter = r"([\"\']*)(\/)(?P<drive>[a-zA-Z])(\/)"
     match = re.match(starts_with_unix_driveletter, pth)
@@ -97,43 +97,67 @@ def convert_unix_drive_letter(pth):
     return pth
 
 
-def convert_unix_slashes(pth):
+def _convert_unix_slashes(pth):
     """Replaces all slashes in pth with backslashes."""
     return pth.replace(slash, backslash)
 
 
-def unescape_unix(pth):
+def _unescape_unix(pth):
     """Removes backslashes in front of certain characters in pth."""
     for token in (space, openpar, closepar):
         pth = pth.replace(backslash + token, token)
     return pth
 
 
-def to_windows(pth):
+def _to_windows(pth):
     """Converts the given Unix path to Windows convention."""
-    pth = convert_unix_drive_letter(pth)
-    pth = convert_unix_slashes(pth)
-    pth = unescape_unix(pth)
-    set_clipboard_content(pth)
+    pth = _convert_unix_drive_letter(pth)
+    pth = _convert_unix_slashes(pth)
+    pth = _unescape_unix(pth)
     return pth
 
 
-def to_unix(pth):
+def _to_unix(pth):
     """Converts the given Windows path to Unix convention."""
-    pth = convert_windows_drive_letter(pth)
-    pth = convert_windows_slashes(pth)
-    pth = escape_windows(pth)
-    set_clipboard_content(pth)
+    pth = _convert_windows_drive_letter(pth)
+    pth = _convert_windows_slashes(pth)
+    pth = _escape_windows(pth)
     return pth
 
 
+def _flip(pth):
+    """Flips each slash to a backslash and each backslash to a slash."""
+    splash_tokens = pth.split(slash)
+    splash_tokens = map(lambda token: token.replace(backslash, slash),
+                        splash_tokens)
+    pth = backslash.join(splash_tokens)
+    return pth
+
+
+def _pathcommand(func):
+    """A decorator to make sure we fetch the pth from one of multiple
+    sources, call the function and store the result to the clipboard."""
+    def wrapper(pth=None):
+        pth = _ensure_path(pth)
+        pth = func(pth)
+        _set_clipboard_content(pth)
+        return pth
+    return wrapper
+
+
+@_pathcommand
 def sl(pth=None):
     """Fetches the pth and converts it to Unix convention."""
-    pth = ensure_path(pth)
-    return to_unix(pth)
+    return _to_unix(pth)
 
 
+@_pathcommand
 def bsl(pth=None):
     """Fetches the pth and converts it to Windows convention."""
-    pth = ensure_path(pth)
-    return to_windows(pth)
+    return _to_windows(pth)
+
+
+@_pathcommand
+def fsl(pth=None):
+    """Fetches the pth and flips the slashes into their opposites."""
+    return _flip(pth)

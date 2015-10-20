@@ -18,7 +18,8 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "sl=slbsl:sl",
-            "bsl=slbsl:bsl"
+            "bsl=slbsl:bsl",
+            "fsl=slbsl:fsl",
         ],
     }
 )
