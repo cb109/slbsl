@@ -10,14 +10,13 @@ the clipboard content as input. The result is returned to the commandline
 and also stored to the clipboard.
 
 """
-__all__ = ["sl", "bsl", "fsl", "esl"]
-
-
 import os
 import re
 import sys
 
 import pyperclip
+
+__all__ = ["sl", "bsl", "fsl", "esl"]
 
 
 colon = ":"
@@ -50,8 +49,10 @@ def _ensure_path(pth):
     clipboard. If none of these source provide input, bail out."""
     pth = pth or _get_commandline_input() or _get_clipboard_content()
     if not pth:
-        print ("ERROR - Could not get path from commandline "
-               "or clipboard or it is empty.")
+        print(
+            "ERROR - Could not get path from commandline "
+            "or clipboard or it is empty."
+        )
         sys.exit(1)
     return pth
 
@@ -91,9 +92,9 @@ def _convert_unix_drive_letter(pth):
         drive = match.group("drive")
         drive_index = pth.find(drive)
         # Drop the leading slash, while keeping any quotation marks.
-        pth = (pth[:drive_index - 1] +
-               drive + colon + backslash +
-               pth[drive_index + 2:])
+        pth = (
+            pth[: drive_index - 1] + drive + colon + backslash + pth[drive_index + 2 :]
+        )
     pth = pth.replace(colon + slash, colon + backslash)
     return pth
 
@@ -134,6 +135,10 @@ def _flip(pth):
     return pth
 
 
+def _is_windows():
+    return os.name == "nt"
+
+
 def _equalize(pth):
     """Equalizes slashes in pth depending on whether slash or backslash
     is the majority.  In case of a draw, favor the one matching the os
@@ -147,8 +152,7 @@ def _equalize(pth):
     elif num_backslash > num_slash:
         return _convert_unix_slashes(pth)
     else:  # Draw.
-        on_windows = os.name == "nt"
-        if on_windows:
+        if _is_windows():
             return _convert_unix_slashes(pth)
         else:
             return _convert_windows_slashes(pth)
@@ -157,11 +161,13 @@ def _equalize(pth):
 def _pathcommand(func):
     """A decorator to make sure we fetch the pth from one of multiple
     sources, call the function and store the result to the clipboard."""
+
     def wrapper(pth=None):
         pth = _ensure_path(pth)
         pth = func(pth)
         _set_clipboard_content(pth)
         return pth
+
     return wrapper
 
 
